@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "缪思",
+  "version": "0.2.0",
+  "identifier": "com.muse.writing",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "缪思",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 900,
+        "minHeight": 620,
+        "resizable": true,
+        "fullscreen": false,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "trafficLightPosition": { "x": 15, "y": 20 }
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset:; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "category": "Productivity",
+    "shortDescription": "一个安静、专注的本地写作空间",
+    "longDescription": "缪思是一款本地优先的 Markdown 写作应用，支持资料库、全文搜索、写作目标与专注模式。",
+    "icon": ["icons/icon.icns"],
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
+  }
+}

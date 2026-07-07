@@ -1,0 +1,6 @@
+# 缪思
+src-tauri/target
+node_modules
+缪思*.dmg
+缪思.app
+*.tsbuildinfo
