@@ -122,6 +122,8 @@ button { color: inherit; cursor: pointer; }
 
 .library-footer { display: flex; align-items: flex-end; gap: 8px; flex: 0 0 auto; margin-top: 8px; padding: 12px 8px 0; border-top: 1px solid rgba(210, 227, 216, .09); }
 .library-footer > button { width: 30px; height: 30px; border: 0; background: transparent; color: #759087; }
+.pwa-install { width: calc(100% - 12px); height: 34px; display: flex; align-items: center; justify-content: center; gap: 7px; flex: 0 0 auto; margin: 8px 6px 0; border: 1px solid rgba(194, 216, 203, .16); border-radius: 8px; background: rgba(226, 239, 229, .08); color: #b9cdc1; font-size: 11px; }
+.pwa-install:hover { background: rgba(226, 239, 229, .13); color: #f4f7f4; }
 .week-progress { flex: 1; min-width: 0; }
 .week-progress > span { display: flex; justify-content: space-between; margin-bottom: 8px; color: #91aaa0; font-size: 10px; }
 .week-progress b { font-weight: 500; }
@@ -225,6 +227,15 @@ button { color: inherit; cursor: pointer; }
 .empty-editor p { max-width: 340px; margin: 0 0 22px; color: #92948f; font-size: 12px; line-height: 1.7; }
 .empty-editor button { display: flex; align-items: center; gap: 6px; border: 0; border-radius: 8px; padding: 8px 13px; background: #244d42; color: white; box-shadow: 0 5px 15px rgba(27, 64, 54, .16); }
 
+.install-backdrop { position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(19, 31, 27, .42); backdrop-filter: blur(5px); }
+.install-card { position: relative; width: min(360px, 100%); padding: 28px 25px 23px; border: 1px solid #dedbd3; border-radius: 16px; background: #fbfaf7; box-shadow: 0 22px 70px rgba(18, 32, 27, .25); text-align: center; }
+.install-close { position: absolute; top: 10px; right: 10px; width: 31px; height: 31px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #858781; }
+.install-close:hover { background: #eeece7; }
+.install-icon { width: 50px; height: 50px; display: grid; place-items: center; margin: 0 auto; border-radius: 14px; background: #e4eee8; color: #315f52; }
+.install-card h2 { margin: 15px 0 7px; font-family: "Songti SC", "STSong", serif; font-size: 21px; }
+.install-card p { margin: 0; color: #747872; font-size: 13px; line-height: 1.7; }
+.install-done { margin-top: 20px; border: 0; border-radius: 8px; padding: 8px 18px; background: #244d42; color: #fff; }
+
 .app.focus-mode { display: block; }
 .app.focus-mode .library-pane, .app.focus-mode .sheets-pane { display: none; }
 .app.focus-mode .editor-pane { width: 100%; height: 100%; }
@@ -242,19 +253,19 @@ button { color: inherit; cursor: pointer; }
   .app { display: block; min-height: 0; }
   .library-pane, .sheets-pane, .editor-pane { display: none; width: 100%; height: 100%; }
   .library-pane.mobile-library, .sheets-pane.mobile-sheets, .editor-pane.mobile-editor { display: flex; }
-  .library-pane { padding-top: 18px; }
+  .library-pane { padding-top: max(18px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   .traffic-lights { visibility: hidden; }
   .brand { padding-top: 4px; }
   .mobile-back { display: grid !important; place-items: center; border: 0; background: transparent; }
-  .sheets-header { height: 62px; }
+  .sheets-header { height: calc(62px + env(safe-area-inset-top)); padding-top: calc(17px + env(safe-area-inset-top)); }
   .sheets-header .mobile-back { width: 30px; height: 30px; margin-left: -8px; color: #4d625a; }
-  .editor-toolbar { grid-template-columns: 1fr auto; padding: 0 12px; }
+  .editor-toolbar { height: calc(58px + env(safe-area-inset-top)); flex-basis: calc(58px + env(safe-area-inset-top)); grid-template-columns: 1fr auto; padding: env(safe-area-inset-top) 12px 0; }
   .format-tools { display: none; }
   .toolbar-left { gap: 9px; }
   .editor-toolbar .mobile-back { width: 32px; height: 32px; color: #38574e; }
   .paper { width: calc(100% - 32px); padding: 42px 5px 0; }
   .editor { font-size: 15px; }
-  .editor-status { grid-template-columns: 1fr 1fr; }
+  .editor-status { height: calc(36px + env(safe-area-inset-bottom)); flex-basis: calc(36px + env(safe-area-inset-bottom)); grid-template-columns: 1fr 1fr; padding-bottom: env(safe-area-inset-bottom); }
   .editor-status > span:first-child { display: none; }
   .goal-meter { min-width: 0; }
   .app.focus-mode .editor-pane { display: flex; }

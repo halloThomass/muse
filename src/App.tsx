@@ -19,6 +19,11 @@ type Sheet = {
   goal?: number;
 };
 
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
+
 const seedSheets: Sheet[] = [
   {
     id: 'morning', group: 'project', section: 'chapter', title: '清晨的房间', favorite: true, goal: 1200,
@@ -104,12 +109,27 @@ function App() {
   const [mobilePane, setMobilePane] = useState<'library' | 'sheets' | 'editor'>('editor');
   const [saved, setSaved] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
+  const [installHelp, setInstallHelp] = useState(false);
+  const [pwaInstalled, setPwaInstalled] = useState(() => window.matchMedia('(display-mode: standalone)').matches);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const isTauri = '__TAURI_INTERNALS__' in window;
 
   useEffect(() => {
-    if ('__TAURI_INTERNALS__' in window) document.documentElement.classList.add('tauri-app');
-  }, []);
+    if (isTauri) document.documentElement.classList.add('tauri-app');
+    const onInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as InstallPromptEvent);
+    };
+    const onInstalled = () => { setPwaInstalled(true); setInstallPrompt(null); };
+    window.addEventListener('beforeinstallprompt', onInstallPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onInstallPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, [isTauri]);
 
   const visibleSheets = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -220,6 +240,14 @@ function App() {
     setMobilePane('sheets');
   }
 
+  async function installPwa() {
+    if (!installPrompt) { setInstallHelp(true); return; }
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice.outcome === 'accepted') setPwaInstalled(true);
+    setInstallPrompt(null);
+  }
+
   return (
     <main className={`app ${focusMode ? 'focus-mode' : ''}`}>
       <aside className={`library-pane mobile-${mobilePane}`}>
@@ -269,6 +297,7 @@ function App() {
           </>}
         </nav>
 
+        {!isTauri && !pwaInstalled && <button className="pwa-install" onClick={() => void installPwa()}><Download size={15} /><span>安装到设备</span></button>}
         <div className="library-footer">
           <div className="week-progress"><span><b>本周</b><em>{totalWords.toLocaleString()} 字</em></span><i><b style={{ width: `${Math.min(100, totalWords / 50)}%` }} /></i><small>目标 5,000 字</small></div>
           <button title="设置"><Settings2 size={18} /></button>
@@ -329,6 +358,17 @@ function App() {
           <span>{Math.max(1, Math.ceil(activeWords / 400))} 分钟阅读</span>
         </footer></> : <div className="empty-editor"><span><FileText size={28} /></span><h2>{currentContextLabel}还没有内容</h2><p>在这里建立第一篇文稿，之后的新建内容也会自动归入这个分类。</p><button onClick={createSheet}><Plus size={16} />新建文稿</button></div>}
       </section>
+      {installHelp && <div className="install-backdrop" onClick={() => setInstallHelp(false)}>
+        <section className="install-card" onClick={event => event.stopPropagation()}>
+          <button className="install-close" onClick={() => setInstallHelp(false)}><X size={18} /></button>
+          <span className="install-icon"><Download size={22} /></span>
+          <h2>安装缪思</h2>
+          {/iPad|iPhone|iPod/.test(navigator.userAgent)
+            ? <p>在 Safari 底部点击“分享”，选择“添加到主屏幕”，再点击“添加”。</p>
+            : <p>请使用 Chrome 或 Edge 打开本页，然后从浏览器菜单选择“安装缪思”或“安装应用”。</p>}
+          <button className="install-done" onClick={() => setInstallHelp(false)}>知道了</button>
+        </section>
+      </div>}
     </main>
   );
 }

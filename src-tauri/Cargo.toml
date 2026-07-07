@@ -1,6 +1,6 @@
 [package]
 name = "muse-writing-app"
-version = "0.2.0"
+version = "0.3.0"
 description = "A calm, local-first writing space"
 authors = ["Muse"]
 edition = "2021"
